@@ -8,13 +8,24 @@ import {
   IconButton,
   Input,
   Textarea,
+
 } from "@material-tailwind/react";
 import { UsersIcon } from "@heroicons/react/24/solid";
 import { PageTitle, Footer } from "@/widgets/layout";
 import { FeatureCard, TeamCard } from "@/widgets/cards";
 import { featuresData, teamData, contactData } from "@/data";
+import emailjs from '@emailjs/browser';
+import Form from "./Form";
 
 export function Home() {
+
+  const sendEmail = (event) => {
+    event.preventDefault();
+    emailjs.sendForm('service_7xyfkg4','template_57hl205',event.target,'m5WckzauftB5sQze6')
+    .then(response => console.log(response))
+    .catch(error => console.log(error))
+  }
+
   return (
     <>
       <div className="relative flex h-screen content-center items-center justify-center pt-16 pb-32">
@@ -163,18 +174,20 @@ export function Home() {
               </Card>
             ))}
           </div>
-          <PageTitle heading="Want to work with us?">
-            Complete this form and we will get back to you in 24 hours.
+          <PageTitle heading="Necesitas mas informacion?">
+          Complete este formulario y nos pondremos en contacto con usted en 24 horas
           </PageTitle>
-          <form className="mx-auto mt-12 max-w-3xl text-center">
+          <form onSubmit={sendEmail} className="mx-auto mt-12 max-w-3xl text-center">
             <div className="mb-8 flex gap-8">
-              <Input variant="standard" size="lg" label="Full Name" />
-              <Input variant="standard" size="lg" label="Email Address" />
+              <Input variant="standard" size="lg" label="Nombre" name='user_name' type="text"/>
+              <Input variant="standard" size="lg" label="Email " name='user_email' type="email"/>
             </div>
-            <Textarea variant="standard" size="lg" label="Message" rows={8} />
+            <Textarea variant="standard" size="lg" label="Mensaje" rows={8} name="user_message"/>
+            <button>
             <Button variant="gradient" size="lg" className="mt-8">
-              Send Message
+              Enviar Mensaje
             </Button>
+            </button>
           </form>
         </div>
       </section>
