@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -15,16 +15,46 @@ import { PageTitle, Footer } from "@/widgets/layout";
 import { FeatureCard, TeamCard } from "@/widgets/cards";
 import { featuresData, teamData, contactData } from "@/data";
 import emailjs from '@emailjs/browser';
-import Form from "./Form";
+import Swal from 'sweetalert2'
+import { Espanol } from "./idioma/espanol";
+import { English } from "./idioma/english";
+
 
 export function Home() {
+  const [idioma,SetIdioma] = useState(Espanol)
+
+  const [input, setInput] = useState({
+    user_name:""
+  })
 
   const sendEmail = (event) => {
     event.preventDefault();
     emailjs.sendForm('service_7xyfkg4','template_57hl205',event.target,'m5WckzauftB5sQze6')
-    .then(response => console.log(response))
+    .then(response => Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'Email enviado exitosamente',
+      text:"Le responderemos dentro de las 24 horas. Muchas gracias !",
+      showConfirmButton: false,
+      timer: 3500
+    }))
+    setInput({user_name:""})
     .catch(error => console.log(error))
   }
+
+  const handleLenguaje = (e) =>{
+    e.preventDefault()
+    e.target.value=="English"?SetIdioma(English):SetIdioma(Espanol)
+  }
+  
+  function handleChange(e) {
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value, // por name le paso valor
+    });
+  }
+
+
 
   return (
     <>
@@ -33,18 +63,26 @@ export function Home() {
         <div className="absolute top-0 h-full w-full bg-black/75 bg-cover bg-center" />
         <div className="max-w-8xl container relative mx-auto">
           <div className="flex flex-wrap items-center">
+          <div className="select-change-idioma">
+        <p>Languaje</p>
+        <select name='Languaje' onChange={handleLenguaje}>
+            <option value="Espanol">Spanish 🇪🇸</option>
+            <option value="English">English 🇬🇧</option>       
+        </select>
+        </div>
             <div className="ml-auto mr-auto w-full px-4 text-center lg:w-8/12">
               <Typography
                 variant="h1"
                 color="white"
                 className="mb-6 font-black"
               >
-                Your story starts with us.
+                {idioma.titulo} 
+
               </Typography>
               <Typography variant="lead" color="white" className="opacity-80">
-                This is a simple example of a Landing Page you can build using
-                Material Tailwind. It features multiple components based on the
-                Tailwind CSS and Material Design by Google.
+                
+                {idioma.subtitulo}
+
               </Typography>
             </div>
           </div>
@@ -53,7 +91,8 @@ export function Home() {
       <section className="-mt-32 bg-gray-50 px-4 pb-20 pt-4">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuresData.map(({ color, title, icon, description }) => (
+
+            {idioma.featuresData.map(({ color, title, icon, description }) => (
               <FeatureCard
                 key={title}
                 color={color}
@@ -64,6 +103,7 @@ export function Home() {
                 description={description}
               />
             ))}
+
           </div>
           <div className="mt-32 flex flex-wrap items-center">
             <div className="mx-auto -mt-8 w-full px-4 md:w-5/12">
@@ -75,17 +115,10 @@ export function Home() {
                 className="mb-3 font-bold"
                 color="blue-gray"
               >
-                Working with us is a pleasure
+                {idioma.trabajo}
               </Typography>
               <Typography className="mb-8 font-normal text-blue-gray-500">
-                Don't let your uses guess by attaching tooltips and popoves to
-                any element. Just make sure you enable them first via
-                JavaScript.
-                <br />
-                <br />
-                The kit comes with three pre-built pages to help you get started
-                faster. You can change the text and images and you're good to
-                go. Just make sure you enable them first via JavaScript.
+               {idioma.subtrabajo}
               </Typography>
               <Button variant="outlined">read more</Button>
             </div>
@@ -104,12 +137,13 @@ export function Home() {
                     color="blue-gray"
                     className="mb-3 font-bold"
                   >
-                    Top Notch Services
+                    {idioma.services}
+
                   </Typography>
                   <Typography className="font-normal text-blue-gray-500">
-                    The Arctic Ocean freezes every winter and much of the
-                    sea-ice then thaws every summer, and that process will
-                    continue whatever happens.
+                    
+                    {idioma.services_sub}
+                    
                   </Typography>
                 </CardBody>
               </Card>
@@ -119,10 +153,10 @@ export function Home() {
       </section>
       <section className="px-4 pt-20 pb-48">
         <div className="container mx-auto">
-          <PageTitle heading="Here are our heroes">
-            According to the National Oceanic and Atmospheric Administration,
-            Ted, Scambos, NSIDClead scentist, puts the potentially record
-            maximum.
+          <PageTitle heading={ idioma.personal_titulo }>
+
+            {idioma.personal_sub}
+
           </PageTitle>
           <div className="mt-24 grid grid-cols-1 gap-12 gap-x-24 md:grid-cols-2 xl:grid-cols-4">
             {teamData.map(({ img, name, position, socials }) => (
@@ -147,13 +181,13 @@ export function Home() {
       </section>
       <section className="relative bg-blue-gray-50/50 py-24 px-4">
         <div className="container mx-auto">
-          <PageTitle heading="Build something">
-            Put the potentially record low maximum sea ice extent tihs year down
-            to low ice. According to the National Oceanic and Atmospheric
-            Administration, Ted, Scambos.
+          <PageTitle heading={idioma.construye}>
+            
+                {idioma.construye_sub}
+
           </PageTitle>
           <div className="mx-auto mt-20 mb-48 grid max-w-5xl grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-3">
-            {contactData.map(({ title, icon, description }) => (
+            {idioma.contactData.map(({ title, icon, description }) => (
               <Card
                 key={title}
                 color="transparent"
@@ -174,18 +208,20 @@ export function Home() {
               </Card>
             ))}
           </div>
-          <PageTitle heading="Necesitas mas informacion?">
-          Complete este formulario y nos pondremos en contacto con usted en 24 horas
+          <PageTitle heading={idioma.contacto_titulo}>
+          
+          {idioma.construye_sub}
+
           </PageTitle>
           <form onSubmit={sendEmail} className="mx-auto mt-12 max-w-3xl text-center">
             <div className="mb-8 flex gap-8">
-              <Input variant="standard" size="lg" label="Nombre" name='user_name' type="text"/>
-              <Input variant="standard" size="lg" label="Email " name='user_email' type="email"/>
+              <Input variant="standard" size="lg" label={idioma.contacto_nombre} name='user_name' value={input.user_name} onChange={handleChange} type="text"/>
+              <Input variant="standard" size="lg" label={idioma.contacto_email} name='user_email' type="email"/>
             </div>
-            <Textarea variant="standard" size="lg" label="Mensaje" rows={8} name="user_message"/>
+            <Textarea variant="standard" size="lg" label={idioma.contacto_message} rows={8} name="user_message"/>
             <button>
             <Button variant="gradient" size="lg" className="mt-8">
-              Enviar Mensaje
+              {idioma.sentMessage}
             </Button>
             </button>
           </form>
